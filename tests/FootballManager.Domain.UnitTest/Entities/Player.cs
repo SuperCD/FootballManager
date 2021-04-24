@@ -54,15 +54,12 @@ namespace FootballManager.Domain.UnitTest.Entities
         public void PlayerThrowsIfAStatusIsAppliedTwice()
         {
             playerUnderTest.ApplyStatus(PlayerStatus.Disqualified);
-            playerUnderTest.ApplyStatus(PlayerStatus.Injured);
             Assert.Throws<PlayerStatusAlreadyAppliedException>(() => playerUnderTest.ApplyStatus(PlayerStatus.Disqualified));
         }
 
         [Test]
         public void PlayerThrowsIfANonPresentStatusIsRemoved()
         {
-            playerUnderTest.ApplyStatus(PlayerStatus.Disqualified);
-            playerUnderTest.RemoveStatus(PlayerStatus.Disqualified);
             Assert.Throws<PlayerStatusNotPresentException>(() => playerUnderTest.RemoveStatus(PlayerStatus.Injured));
         }
     }
