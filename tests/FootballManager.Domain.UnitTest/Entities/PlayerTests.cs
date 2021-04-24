@@ -1,6 +1,7 @@
 using FootballManager.Domain.Entities;
 using FootballManager.Domain.Exceptions;
 using NUnit.Framework;
+using System;
 
 namespace FootballManager.Domain.UnitTest.Entities
 {
@@ -62,5 +63,24 @@ namespace FootballManager.Domain.UnitTest.Entities
         {
             Assert.Throws<PlayerStatusNotPresentException>(() => playerUnderTest.RemoveStatus(PlayerStatus.Injured));
         }
+
+        [Test]
+        public void PlayerIsFreeAgentUponCreation()
+        {
+            Assert.True(playerUnderTest.IsFreeAgent);
+        }
+
+        [Test]
+        public void PlayerIsNotFreeAgentIfJoinsTeam()
+        {
+            playerUnderTest.CurrentTeam = new Team()
+            {
+                Name = "Test Team",
+                FoundedIn = DateTime.Now
+            };
+
+            Assert.False(playerUnderTest.IsFreeAgent);
+        }
+
     }
 }

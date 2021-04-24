@@ -24,6 +24,11 @@ namespace FootballManager.Domain.Entities
         public List<PlayerStatus> Statuses { get; private set; } = new List<PlayerStatus>();
 
         /// <summary>
+        /// Navigation property for the current team the player is playing for. Can be null if the player is a free agent (which is upon creation)
+        /// </summary>
+        public Team CurrentTeam { get; set; }
+
+        /// <summary>
         /// Is the player available to be in the team formation?
         /// </summary>
         public bool IsAvailable
@@ -33,6 +38,8 @@ namespace FootballManager.Domain.Entities
                 return !Statuses.Any(x => x.DeterminesUnavailabilty);
             }
         }
+
+        public bool IsFreeAgent => CurrentTeam == null;
 
         /// <summary>
         /// Applies a status to the player, if he was not already affected by that status
