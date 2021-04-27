@@ -15,7 +15,18 @@ namespace FootballManager.Domain.Entities
         ///  The full list of player that play for this team, including the ones not in the current formation
         /// </summary>
         public List<Player> Rooster { get; private set; } = new List<Player>();
- 
+
+        /// <summary>
+        ///  The current formation on the field for the team
+        /// </summary>
+        public Formation Formation;
+
+        public Team()
+        {
+            Formation = Formation.Build("4-4-2"); // Always default to 4-4-2 in this demo
+            Formation.ParentTeam = this;
+        }
+
         /// <summary>
         /// Adds a player to the rooster
         /// </summary>
@@ -33,17 +44,27 @@ namespace FootballManager.Domain.Entities
             joiningPlayer.CurrentTeam = this;
         }
 
+        /// <summary>
+        /// Removes a player from the rooster, and from the formation if he was in it
+        /// </summary>
+        /// <param name="leavingPlayer">The player leaving the team</param>
         public void RemovePlayer(Player leavingPlayer)
         {
             if (!Rooster.Contains(leavingPlayer))
             {
-                throw new PlayerNotInTeamException();
+                throw new PlayerNotFoundException();
+            }
+
+
+            if (Formation.HasPlayer(leavingPlayer))
+            {
+                Formation.RemovePlayer(leavingPlayer);
             }
 
             Rooster.Remove(leavingPlayer);
-
             leavingPlayer.CurrentTeam = null;
         }
+
 
 
     }

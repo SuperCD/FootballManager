@@ -4,10 +4,11 @@ using System.Runtime.Serialization;
 namespace FootballManager.Domain.Exceptions
 {
     [Serializable]
-    public class PlayerNotInTeamException : Exception
+    public class UnknownFormationTypeException : Exception
     {
-        public PlayerNotInTeamException()
+        public UnknownFormationTypeException()
         {
         }
+
     }
 }
