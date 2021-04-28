@@ -23,6 +23,8 @@ namespace FootballManager.Domain.SeedWork
                      .Select(f => f.GetValue(null))
                      .Cast<T>();
 
+        public static T GetById<T>(int id) where T : Enumeration => GetAll<T>().Single(x => x.Id == id);
+
         public override bool Equals(object obj)
         {
             if (!(obj is Enumeration))
