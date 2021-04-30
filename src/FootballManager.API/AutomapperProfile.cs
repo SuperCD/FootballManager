@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FootballManager.API.Controllers;
 using FootballManager.API.Controllers.Players;
 using FootballManager.Domain.Entities;
 using System;
@@ -13,6 +14,7 @@ namespace FootballManager.API
         public AutomapperProfile()
         {
             CreateMap<Player, PlayerDto>();
+            CreateMap<Team, TeamDto>();
         }
     }
 }

@@ -1,6 +1,8 @@
-﻿using FootballManager.Domain.Entities;
+﻿using AutoMapper;
+using FootballManager.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using FootballManager.Domain.Interfaces;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
@@ -17,21 +19,15 @@ namespace FootballManager.API.Controllers
     {
 
         private readonly ILogger<TeamsController> _logger;
-        private readonly List<TeamDto> testTeamDB;
-
-        public TeamsController(ILogger<TeamsController> logger)
+        private readonly IMapper _mapper;
+        private readonly IAsyncRepository<Team> _teamsRepository;
+        public TeamsController(IAsyncRepository<Team> teamsRepository,
+            IMapper mapper,
+            ILogger<TeamsController> logger)
         {
             _logger = logger;
-            int id = 1;
-            Random r = new Random();
-            // TEST
-            testTeamDB = Enumerable.Range(1, 5).Select(index => new TeamDto()
-            {
-                Id = id++,
-                Name = $"Real {id}",
-                FoundedIn = DateTime.Now - TimeSpan.FromDays(r.Next(2000))
-            }).ToList();
-            //TEST
+            _mapper = mapper;
+            _teamsRepository = teamsRepository;
         }
 
         [HttpGet]
@@ -44,11 +40,12 @@ namespace FootballManager.API.Controllers
         public async Task<ActionResult<ListTeamsResponse>> ListTeams(CancellationToken cancellationToken)
         {
             var response = new ListTeamsResponse();
-            response.Teams.AddRange(testTeamDB);
+            var dbList = await _teamsRepository.ListAsync(cancellationToken);
+            response.Teams.AddRange(_mapper.Map<IReadOnlyList<TeamDto>>(dbList));
             return Ok(response);
         }
 
-        [HttpGet("{TeamId}")]
+        [HttpGet("{teamId}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetTeamsResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [SwaggerOperation(
@@ -56,11 +53,11 @@ namespace FootballManager.API.Controllers
             Description = "Gets details about a specific Team",
             OperationId = "Teams.Get")
         ]
-        public async Task<ActionResult<GetTeamsResponse>> GetTeam([FromRoute] int TeamId, CancellationToken cancellationToken)
+        public async Task<ActionResult<GetTeamsResponse>> GetTeam([FromRoute] int teamId, CancellationToken cancellationToken)
         {
             var response = new GetTeamsResponse
             {
-                Team = testTeamDB.SingleOrDefault(p => p.Id == TeamId)
+                Team = _mapper.Map<TeamDto>(await _teamsRepository.GetByIdAsync(teamId, cancellationToken))
             };
             if (response.Team != null)
             {
@@ -81,19 +78,20 @@ namespace FootballManager.API.Controllers
 ]
         public async Task<ActionResult<CreateTeamResponse>> CreateTeam([FromBody] CreateTeamRequest createTeamRequest, CancellationToken cancellationToken)
         {
-            var Team = new TeamDto()
+            var team = new Team()
             {
-                Id = testTeamDB.Count,
                 Name = createTeamRequest.Name,
                 FoundedIn = createTeamRequest.FoundedIn
             };
-            testTeamDB.Add(Team);
-            var response = new CreateTeamResponse();
-            response.Team = Team;
+            await _teamsRepository.AddAsync(team, cancellationToken);
+            var response = new CreateTeamResponse
+            {
+                Team = _mapper.Map<TeamDto>(team)
+            };
             return Ok(response);
         }
 
-        [HttpPost("{TeamId}")]
+        [HttpPost("{teamId}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CreateTeamResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [SwaggerOperation(
@@ -101,17 +99,19 @@ namespace FootballManager.API.Controllers
             Description = "Updated a specific Team data",
             OperationId = "Teams.Update")
 ]
-        public async Task<ActionResult<CreateTeamResponse>> UpdateTeam([FromRoute] int TeamId, [FromBody] UpdateTeamRequest createTeamRequest, CancellationToken cancellationToken)
+        public async Task<ActionResult<CreateTeamResponse>> UpdateTeam([FromRoute] int teamId, [FromBody] UpdateTeamRequest createTeamRequest, CancellationToken cancellationToken)
         {
-            var Team = testTeamDB.SingleOrDefault(x => x.Id == TeamId);
-            if (Team != null)
+            var team = await _teamsRepository.GetByIdAsync(teamId, cancellationToken);
+            if (team != null)
             {
-                Team.Name = createTeamRequest.Name;
-                Team.FoundedIn = createTeamRequest.FoundedIn;
+                team.Name = createTeamRequest.Name;
+                team.FoundedIn = createTeamRequest.FoundedIn;
 
-                var response = new CreateTeamResponse
+                await _teamsRepository.UpdateAsync(team, cancellationToken);
+
+                var response = new CreateTeamResponse()
                 {
-                    Team = Team
+                    Team = _mapper.Map<TeamDto>(team)
                 };
                 return Ok(response);
             } 
