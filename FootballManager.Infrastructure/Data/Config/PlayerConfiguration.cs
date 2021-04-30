@@ -24,17 +24,18 @@ namespace FootballManager.Infrastructure.Data.Config
                 .IsRequired(true)
                 .HasMaxLength(50);
 
-            builder.Property(ci => ci.BirthDate)
-                .IsRequired(false);
+            builder.Property(ci => ci.BirthDate);
 
-            builder.Property(ci => ci.PreferredFoot)
-                .IsRequired(false);
+            builder.Property(ci => ci.PreferredFoot);
 
             builder.Property(ci => ci.Role)
                 .IsRequired(true)
                 .HasConversion(
                     v => v.Id,
                     v => Domain.SeedWork.Enumeration.GetById<PlayerRole>(v));
+
+            var navigation = builder.Metadata.FindNavigation(nameof(Player.Statuses));
+            navigation.SetPropertyAccessMode(PropertyAccessMode.Property);
 
         }
     }

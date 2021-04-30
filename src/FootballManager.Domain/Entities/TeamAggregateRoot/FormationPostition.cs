@@ -17,5 +17,11 @@ namespace FootballManager.Domain.Entities
             PositionNo = positionNo;
             Role = role;
         }
+
+        // Required by EF
+        private FormationPostition()
+        {
+
+        }
     }
 }

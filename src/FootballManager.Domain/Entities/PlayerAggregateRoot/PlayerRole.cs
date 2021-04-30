@@ -1,6 +1,7 @@
 ﻿using FootballManager.Domain.SeedWork;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace FootballManager.Domain.Entities
@@ -27,7 +28,7 @@ namespace FootballManager.Domain.Entities
             Acronym = acronym;
         }
 
-
+        public static PlayerRole GetByAcronym(string roleAcronym) => GetAll<PlayerRole>().Single(x => x.Acronym == roleAcronym);
     }
 
     

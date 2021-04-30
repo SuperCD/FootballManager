@@ -1,7 +1,10 @@
+using FootballManager.Infrastructure.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using FootballManager.Domain.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -23,9 +26,27 @@ namespace FootballManager.API
 
         public IConfiguration Configuration { get; }
 
+        private void ConfigureInMemoryDatabases(IServiceCollection services)
+        {
+            services.AddDbContext<FootballManagerContext>(c =>
+                c.UseInMemoryDatabase("Catalog"));
+        }
+
+        public void ConfigureDevelopmentServices(IServiceCollection services)
+        {
+            // use in-memory database
+            ConfigureInMemoryDatabases(services);
+            ConfigureServices(services);
+        }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAutoMapper(typeof(Startup).Assembly);
+
+            // Add EF implementation of repositories to the dependency injection
+            services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
+
             services.AddControllers();
 
             services.AddSwaggerGen(c =>

@@ -1,7 +1,10 @@
-﻿using FootballManager.API.Controllers.Players;
+﻿using AutoMapper;
+using FootballManager.API.Controllers.Players;
 using FootballManager.Domain.Entities;
+using FootballManager.Domain.SeedWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using FootballManager.Domain.Interfaces;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
@@ -18,22 +21,16 @@ namespace FootballManager.API.Controllers
     {
 
         private readonly ILogger<PlayersController> _logger;
-        private readonly List<PlayerDto> testPlayerDB;
+        private readonly IMapper _mapper;
+        private readonly IAsyncRepository<Player> _playersRepository;
 
-        public PlayersController(ILogger<PlayersController> logger)
+        public PlayersController(IAsyncRepository<Player> playersRepository,
+            IMapper mapper,
+            ILogger<PlayersController> logger)
         {
             _logger = logger;
-            int id = 1;
-            // TEST
-            testPlayerDB = Enumerable.Range(1, 5).Select(index => new PlayerDto()
-            {
-                Id = id++,
-                Name = "Aldo",
-                Surname = "Baglio",
-                RoleAcronym = PlayerRole.Defender.Acronym,
-                CurrentTeamId = 0
-            }).ToList();
-            //TEST
+            _mapper = mapper;
+            _playersRepository = playersRepository;
         }
 
         [HttpGet]
@@ -46,7 +43,8 @@ namespace FootballManager.API.Controllers
         public async Task<ActionResult<ListPlayersResponse>> ListPlayers(CancellationToken cancellationToken)
         {
             var response = new ListPlayersResponse();
-            response.Players.AddRange(testPlayerDB);
+            var dbList = await _playersRepository.ListAsync(cancellationToken);
+            response.Players.AddRange(_mapper.Map<IReadOnlyList<PlayerDto>>(dbList));
             return Ok(response);
         }
 
@@ -62,7 +60,7 @@ namespace FootballManager.API.Controllers
         {
             var response = new GetPlayersResponse
             {
-                Player = testPlayerDB.SingleOrDefault(p => p.Id == playerId)
+                Player = _mapper.Map<PlayerDto>(await _playersRepository.GetByIdAsync(playerId, cancellationToken))
             };
             if (response.Player != null)
             {
@@ -83,16 +81,15 @@ namespace FootballManager.API.Controllers
 ]
         public async Task<ActionResult<CreatePlayerResponse>> CreatePlayer([FromBody] CreatePlayerRequest createPlayerRequest, CancellationToken cancellationToken)
         {
-            var player = new PlayerDto()
+            var player = new Player()
             {
-                Id = testPlayerDB.Count,
                 Name = createPlayerRequest.Name,
                 Surname = createPlayerRequest.Surname,
-                RoleAcronym = createPlayerRequest.RoleAcronym,
+                Role = PlayerRole.GetByAcronym(createPlayerRequest.RoleAcronym)
             };
-            testPlayerDB.Add(player);
+            await _playersRepository.AddAsync(player, cancellationToken);
             var response = new CreatePlayerResponse();
-            response.Player = player;
+            response.Player = _mapper.Map<PlayerDto>(player);
             return Ok(response);
         }
 
@@ -106,16 +103,18 @@ namespace FootballManager.API.Controllers
 ]
         public async Task<ActionResult<CreatePlayerResponse>> UpdatePlayer([FromRoute] int playerId, [FromBody] UpdatePlayerRequest createPlayerRequest, CancellationToken cancellationToken)
         {
-            var player = testPlayerDB.SingleOrDefault(x => x.Id == playerId);
+            var player = await _playersRepository.GetByIdAsync(playerId, cancellationToken);
             if (player != null)
             {
                 player.Name = createPlayerRequest.Name;
                 player.Surname = createPlayerRequest.Surname;
-                player.RoleAcronym = createPlayerRequest.RoleAcronym;
+                player.Role = PlayerRole.GetByAcronym(createPlayerRequest.RoleAcronym);
+
+                await _playersRepository.UpdateAsync(player, cancellationToken);
 
                 var response = new CreatePlayerResponse
                 {
-                    Player = player
+                    Player = _mapper.Map<PlayerDto>(player)
                 };
                 return Ok(response);
             } 

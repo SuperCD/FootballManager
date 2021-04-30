@@ -24,6 +24,12 @@ namespace FootballManager.Domain.Entities
         {
             DeterminesUnavailabilty = unavailability;
         }
+
+        // Required by EF
+        private PlayerStatus(): base(0, string.Empty)
+        {
+
+        }
     }
 
 }
