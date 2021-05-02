@@ -1,4 +1,4 @@
-﻿namespace FootballManager.API.Controllers
+﻿namespace FootballManager.API.Requests
 {
     public class PlayerStatusRequest
     {

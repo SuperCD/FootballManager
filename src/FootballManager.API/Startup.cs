@@ -30,9 +30,6 @@ namespace FootballManager.API
         {
              services.AddDbContext<FootballManagerContext>(c =>
                 c.UseInMemoryDatabase("Catalog"));
-
-           // services.AddDbContext<FootballManagerContext>(c =>
-    //c.UseSqlServer(Configuration.GetConnectionString("FootballManagerConnection")));
         }
 
         public void ConfigureDevelopmentServices(IServiceCollection services)

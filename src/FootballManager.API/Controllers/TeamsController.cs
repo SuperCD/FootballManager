@@ -1,13 +1,14 @@
 ﻿using AutoMapper;
+using FootballManager.API.Dto;
+using FootballManager.API.Requests;
+using FootballManager.API.Responses;
 using FootballManager.Domain.Entities;
+using FootballManager.Domain.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using FootballManager.Domain.Interfaces;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 

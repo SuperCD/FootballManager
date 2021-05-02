@@ -1,7 +1,7 @@
-﻿using FootballManager.API.Controllers.Players;
+﻿using FootballManager.API.Dto;
 using System.Collections.Generic;
 
-namespace FootballManager.API.Controllers
+namespace FootballManager.API.Responses
 {
     public class ListRoosterResponse
     {

@@ -1,9 +1,10 @@
 ﻿using System;
 
-namespace FootballManager.API.Controllers
+namespace FootballManager.API.Dto
 {
-    public class UpdateTeamRequest
+    public class TeamDto
     {
+        public int Id { get; set; }
         public string Name { get; set; }
         public DateTime FoundedIn { get; set; }
     }

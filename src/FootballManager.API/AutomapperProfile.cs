@@ -1,11 +1,6 @@
 ﻿using AutoMapper;
-using FootballManager.API.Controllers;
-using FootballManager.API.Controllers.Players;
+using FootballManager.API.Dto;
 using FootballManager.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace FootballManager.API
 {

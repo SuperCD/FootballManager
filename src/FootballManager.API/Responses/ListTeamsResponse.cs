@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using FootballManager.API.Dto;
+using System.Collections.Generic;
 
-namespace FootballManager.API.Controllers
+namespace FootballManager.API.Responses
 {
     public class ListTeamsResponse
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace FootballManager.API.Controllers.Players
+namespace FootballManager.API.Dto
 {
     /// <summary>
     /// DTO class to avoid overexposing internal model data to the API

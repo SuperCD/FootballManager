@@ -1,4 +1,5 @@
-﻿namespace FootballManager.API.Controllers.Players
+﻿using FootballManager.API.Dto;
+namespace FootballManager.API.Responses
 {
     public class GetPlayersResponse
     {
