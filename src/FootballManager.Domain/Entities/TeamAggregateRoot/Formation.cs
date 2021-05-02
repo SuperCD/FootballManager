@@ -136,5 +136,21 @@ namespace FootballManager.Domain.Entities
             return formation;
         }
 
+        /// <summary>
+        /// Makes the position empty if there is any player in it
+        /// </summary>
+        /// <param name="positionNo">the position that will be emptied</param>
+        public void EmptyPosition(int positionNo)
+        {
+            var slot = Postitions.FirstOrDefault(x => x.PositionNo == positionNo);
+            if (slot != null)
+            {
+                slot.Player = null;
+            }
+            else
+            {
+                throw new PlayerNotFoundException();
+            }
+        }
     }
 }

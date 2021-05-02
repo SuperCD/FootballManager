@@ -58,7 +58,7 @@ namespace FootballManager.API.Controllers
         [SwaggerOperation(
             Summary = "Add Player to formation",
             Description = "Adds a team player to the formation in the first compatible position (if available)",
-            OperationId = "Formation.Add")
+            OperationId = "Formation.AddPlayer")
         ]
         public async Task<ActionResult<AddPlayerToFormationResponse>> AddPlayerToFormation([FromRoute] int teamId, [FromBody] PlayerOperationRequest request, CancellationToken cancellationToken)
         {
@@ -72,7 +72,7 @@ namespace FootballManager.API.Controllers
             {
                 response.TeamId = teamId;
                 response.PlayerId = request.PlayerId;
-                response.PositionNo = team.Formation.Postitions.Single(x => x.Player.Id == request.PlayerId).PositionNo;
+                response.PositionNo = team.Formation.Postitions.Single(x => x.Player?.Id == request.PlayerId).PositionNo;
             }
             return Ok(response);
         }
@@ -83,7 +83,7 @@ namespace FootballManager.API.Controllers
         [SwaggerOperation(
             Summary = "Add Player to a position",
             Description = "Adds a team player to the formation in the specific position",
-            OperationId = "Formation.Add")
+            OperationId = "FormationPosition.AddPlayer")
         ]
         public async Task<ActionResult<AddPlayerToFormationResponse>> AddPlayerToPosition([FromRoute] int teamId, [FromRoute] int positionNo, [FromBody] PlayerOperationRequest request, CancellationToken cancellationToken)
         {
@@ -101,5 +101,37 @@ namespace FootballManager.API.Controllers
             }
             return Ok(response);
         }
+
+        [HttpDelete("{positionNo}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [SwaggerOperation(
+            Summary = "Empty Position",
+            Description = "Removes any player from the position and makes it empty",
+            OperationId = "FormationPosition.Empty")
+        ]
+        public async Task<StatusCodeResult> EmptyPosition([FromRoute] int teamId, [FromRoute] int positionNo, CancellationToken cancellationToken)
+        {
+            var team = await _teamsRepository.GetByIdWithFormationAsync(teamId);
+            team.Formation.EmptyPosition(positionNo);
+            await _teamsRepository.UpdateAsync(team);
+            return Ok();
+        }
+
+        [HttpDelete]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [SwaggerOperation(
+            Summary = "Remove Player",
+            Description = "Removes a specific player from the formation if he is in it",
+            OperationId = "Formation.RemovePlayer")
+        ]
+        public async Task<StatusCodeResult> RemovePlayer([FromRoute] int teamId, [FromBody] PlayerOperationRequest request, CancellationToken cancellationToken)
+        {
+            var team = await _teamsRepository.GetByIdWithFormationAsync(teamId);
+            var player = await _playersRepository.GetByIdAsync(request.PlayerId);
+            team.Formation.RemovePlayer(player);
+            await _teamsRepository.UpdateAsync(team);
+            return Ok();
+        }
+
     }
 }

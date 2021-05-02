@@ -125,5 +125,29 @@ namespace FootballManager.API.Controllers
 
             
         }
+
+        [HttpDelete("{playerId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [SwaggerOperation(
+            Summary = "Delete a specific player",
+            Description = "Deletes a specific player from the database",
+            OperationId = "players.Delete")
+        ]
+        public async Task<StatusCodeResult> DeletePlayer([FromRoute] int playerId, CancellationToken cancellationToken)
+        {
+            var player = await _playersRepository.GetByIdAsync(playerId, cancellationToken);
+
+            if (player != null)
+            {
+                await _playersRepository.DeleteAsync(player);
+
+                return Ok();
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
     }
 }

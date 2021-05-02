@@ -20,8 +20,8 @@ namespace FootballManager.API.Controllers
 
         private readonly ILogger<TeamsController> _logger;
         private readonly IMapper _mapper;
-        private readonly IAsyncRepository<Team> _teamsRepository;
-        public TeamsController(IAsyncRepository<Team> teamsRepository,
+        private readonly ITeamRepository _teamsRepository;
+        public TeamsController(ITeamRepository teamsRepository,
             IMapper mapper,
             ILogger<TeamsController> logger)
         {
@@ -118,9 +118,30 @@ namespace FootballManager.API.Controllers
             else
             {
                 return BadRequest();
-            }
+            }           
+        }
 
-            
+
+        [HttpDelete("{teamId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [SwaggerOperation(
+            Summary = "Delete a specific Team",
+            Description = "Delete a team and makes all it's player free agents",
+            OperationId = "Teams.Delete")
+        ]
+        public async Task<StatusCodeResult> DeleteTeam([FromRoute] int teamId, CancellationToken cancellationToken)
+        {
+            var team = await _teamsRepository.GetByIdWithRoosterAsync(teamId);
+            if (team != null)
+            {
+                await _teamsRepository.DeleteAsync(team);
+                return Ok();
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
     }
 }

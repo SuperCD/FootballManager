@@ -77,5 +77,24 @@ namespace FootballManager.API.Controllers
             }
             return Ok(response);
         }
+
+        [HttpDelete]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [SwaggerOperation(
+    Summary = "Remove Player to the rooster",
+    Description = "Removes a player from the team rooster and from the formation",
+    OperationId = "Rooster.Remove")
+]
+        public async Task<StatusCodeResult> RemovePlayerToRooster([FromRoute] int teamId, [FromBody] PlayerOperationRequest request, CancellationToken cancellationToken)
+        {
+            var team = await _teamsRepository.GetByIdWithFormationAsync(teamId);
+            var player = await _playersRepository.GetByIdAsync(request.PlayerId);
+
+            team.RemovePlayer(player);
+
+            await _teamsRepository.UpdateAsync(team);
+
+            return Ok();
+        }
     }
 }
