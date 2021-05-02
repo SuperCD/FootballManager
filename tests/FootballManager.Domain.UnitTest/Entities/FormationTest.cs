@@ -51,9 +51,9 @@ namespace FootballManager.Domain.UnitTest.Entities
 
             // Add them to the formation
             teamUnderTest.Formation.AddPlayer(defender1);
-            Assert.That(teamUnderTest.Formation.Postitions.Any(x => x.CurrentPlayer == defender1));
+            Assert.That(teamUnderTest.Formation.Postitions.Any(x => x.Player == defender1));
             teamUnderTest.Formation.AddPlayer(defender2);
-            Assert.That(teamUnderTest.Formation.Postitions.Any(x => x.CurrentPlayer == defender2));
+            Assert.That(teamUnderTest.Formation.Postitions.Any(x => x.Player == defender2));
         }
 
         [Test]
@@ -87,7 +87,7 @@ namespace FootballManager.Domain.UnitTest.Entities
 
             // Add them to the formation
             teamUnderTest.Formation.AddPlayer(defender1, 2);
-            Assert.That(teamUnderTest.Formation.Postitions.Any(x => (x.PositionNo == 2) && (x.CurrentPlayer == defender1)));
+            Assert.That(teamUnderTest.Formation.Postitions.Any(x => (x.PositionNo == 2) && (x.Player == defender1)));
         }
 
         [Test]
@@ -135,11 +135,11 @@ namespace FootballManager.Domain.UnitTest.Entities
             teamUnderTest.AddPlayer(player);
 
             teamUnderTest.Formation.AddPlayer(player);
-            Assert.That(teamUnderTest.Formation.Postitions.Any(x => x.CurrentPlayer == player));
+            Assert.That(teamUnderTest.Formation.Postitions.Any(x => x.Player == player));
 
             teamUnderTest.RemovePlayer(player);
 
-            Assert.That(!teamUnderTest.Formation.Postitions.Any(x => x.CurrentPlayer == player));
+            Assert.That(!teamUnderTest.Formation.Postitions.Any(x => x.Player == player));
         }
 
         [Test]
@@ -152,10 +152,10 @@ namespace FootballManager.Domain.UnitTest.Entities
             teamUnderTest.AddPlayer(player);
 
             teamUnderTest.Formation.AddPlayer(player);
-            Assert.That(teamUnderTest.Formation.Postitions.Any(x =>x.CurrentPlayer == player));
+            Assert.That(teamUnderTest.Formation.Postitions.Any(x =>x.Player == player));
 
             teamUnderTest.Formation.RemovePlayer(player);
-            Assert.That(!teamUnderTest.Formation.Postitions.Any(x => x.CurrentPlayer == player));
+            Assert.That(!teamUnderTest.Formation.Postitions.Any(x => x.Player == player));
         }
 
         [Test]

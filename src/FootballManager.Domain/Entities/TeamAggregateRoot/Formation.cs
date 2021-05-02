@@ -9,13 +9,27 @@ namespace FootballManager.Domain.Entities
 {
     public class Formation: BaseEntity
     {
+        private Team _parentTeam;
+
         public string FormationType { get; set; }
         public List<FormationPostition> Postitions { get; private set; } = new List<FormationPostition>();
-        
+
+        public int ParentTeamId { get; private set; }
         /// <summary>
         ///  The team that is using this formation
         /// </summary>
-        public Team ParentTeam { get; set; }
+        public Team ParentTeam
+        {
+            get
+            {
+                return _parentTeam;
+            }
+            set
+            {
+                _parentTeam = value;
+                ParentTeamId = value.Id;
+            }
+        }
 
         /// <summary>
         ///  Adds a player to the first compatible position in the formation
@@ -27,7 +41,7 @@ namespace FootballManager.Domain.Entities
             var slot = Postitions.FirstOrDefault(x => x.Role == player.Role && x.IsEmpty);
             if (slot != null)
             { 
-                slot.CurrentPlayer = player;
+                slot.Player = player;
             }
             else
             {
@@ -48,7 +62,7 @@ namespace FootballManager.Domain.Entities
             if (!slot.IsEmpty) throw new FormationSlotNotAvailableException();
             if (slot.Role != player.Role) throw new FormationSlotIncompatibleException();
 
-            slot.CurrentPlayer = player;
+            slot.Player = player;
         }
 
         /// <summary>
@@ -57,10 +71,10 @@ namespace FootballManager.Domain.Entities
         /// <param name="player"></param>
         public void RemovePlayer(Player player)
         {
-            var slot = Postitions.FirstOrDefault(x => x.CurrentPlayer == player);
+            var slot = Postitions.FirstOrDefault(x => x.Player == player);
             if (slot != null)
             {
-                slot.CurrentPlayer = null;
+                slot.Player = null;
             }
             else
             {
@@ -75,7 +89,7 @@ namespace FootballManager.Domain.Entities
         /// <returns>True if the player is in the formation</returns>
         public bool HasPlayer(Player player)
         {
-            return Postitions.Any(x => x.CurrentPlayer == player);
+            return Postitions.Any(x => x.Player == player);
         }
 
         /// <summary>

@@ -6,11 +6,11 @@ namespace FootballManager.Domain.Entities
     {
         public int PositionNo { get; private set; }
         public PlayerRole Role { get; private set; }
-        public Player CurrentPlayer { get; set; }
+        public Player Player { get; set; }
         /// <summary>
         /// Is this position empty?
         /// </summary>
-        public bool IsEmpty => CurrentPlayer == null;
+        public bool IsEmpty => Player == null;
 
         public FormationPostition(int positionNo, PlayerRole role)
         {

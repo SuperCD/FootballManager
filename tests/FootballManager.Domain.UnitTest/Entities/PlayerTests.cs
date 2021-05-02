@@ -2,6 +2,7 @@ using FootballManager.Domain.Entities;
 using FootballManager.Domain.Exceptions;
 using NUnit.Framework;
 using System;
+using System.Linq;
 
 namespace FootballManager.Domain.UnitTest.Entities
 {
@@ -31,7 +32,7 @@ namespace FootballManager.Domain.UnitTest.Entities
             Assert.IsEmpty(playerUnderTest.Statuses);
             playerUnderTest.ApplyStatus(PlayerStatus.Disqualified);
             Assert.AreEqual(playerUnderTest.Statuses.Count, 1);
-            Assert.That(playerUnderTest.Statuses.Contains(PlayerStatus.Disqualified));
+            Assert.That(playerUnderTest.Statuses.Any(x=>x.Status == PlayerStatus.Disqualified));
         }
 
         [Test]
@@ -73,11 +74,11 @@ namespace FootballManager.Domain.UnitTest.Entities
         [Test]
         public void PlayerIsNotFreeAgentIfJoinsTeam()
         {
-            playerUnderTest.CurrentTeam = new Team()
+            playerUnderTest.AssignToTeam(new Team()
             {
                 Name = "Test Team",
                 FoundedIn = DateTime.Now
-            };
+            });
 
             Assert.False(playerUnderTest.IsFreeAgent);
         }

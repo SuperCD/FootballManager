@@ -39,9 +39,9 @@ namespace FootballManager.Domain.Entities
             }
 
             Rooster.Add(joiningPlayer);
-            
+
             // Update the player join status
-            joiningPlayer.CurrentTeam = this;
+            joiningPlayer.AssignToTeam(this);
         }
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace FootballManager.Domain.Entities
             }
 
             Rooster.Remove(leavingPlayer);
-            leavingPlayer.CurrentTeam = null;
+            leavingPlayer.RemoveFromTeam();
         }
 
 

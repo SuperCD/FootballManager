@@ -21,12 +21,13 @@ namespace FootballManager.Domain.Entities
         /// <summary>
         /// A list of statuses that affect the player
         /// </summary>
-        public List<PlayerStatus> Statuses { get; private set; } = new List<PlayerStatus>();
+        public List<ActivePlayerStatus> Statuses { get; private set; } = new List<ActivePlayerStatus>();
 
+        public int? CurrentTeamId { get; private set; }
         /// <summary>
         /// Navigation property for the current team the player is playing for. Can be null if the player is a free agent (which is upon creation)
         /// </summary>
-        public Team CurrentTeam { get; set; }
+        public Team CurrentTeam { get; private set; }
 
         /// <summary>
         /// Is the player available to be in the team formation?
@@ -35,7 +36,7 @@ namespace FootballManager.Domain.Entities
         {
             get
             {
-                return !Statuses.Any(x => x.DeterminesUnavailabilty);
+                return !Statuses.Any(x => x.Status.DeterminesUnavailabilty);
             }
         }
 
@@ -48,14 +49,28 @@ namespace FootballManager.Domain.Entities
         /// <exception cref="PlayerStatusAlreadyAppliedException">If the player already had that status</exception>
         public void ApplyStatus(PlayerStatus status)
         {
-            if (!Statuses.Contains(status))
+            if (!Statuses.Any(x=> x.Status == status))
             {
-                Statuses.Add(status);
+                Statuses.Add(new ActivePlayerStatus(this, status));
             }
             else
             {
                 throw new PlayerStatusAlreadyAppliedException();
             }
+        }
+
+
+        public void AssignToTeam(Team team)
+        {
+            CurrentTeam = team;
+            CurrentTeamId = team.Id;
+        }
+
+
+        public void RemoveFromTeam()
+        {
+            CurrentTeam = null;
+            CurrentTeamId = null;
         }
 
         /// <summary>
@@ -65,9 +80,9 @@ namespace FootballManager.Domain.Entities
         /// <exception cref="PlayerStatusNotPresentException">If the player was not actually affected by that status</exception>
         public void RemoveStatus(PlayerStatus status)
         {
-            if (Statuses.Contains(status))
+            if (Statuses.Any(x => x.Status == status))
             {
-                Statuses.Remove(status);
+                Statuses.RemoveAll(x => x.Status == status);
             }
             else
             {
