@@ -3,12 +3,14 @@ using FootballManager.API.Dto;
 using FootballManager.API.Requests;
 using FootballManager.API.Responses;
 using FootballManager.Domain.Entities;
+using FootballManager.Domain.Exceptions;
 using FootballManager.Domain.Interfaces;
 using FootballManager.Domain.SeedWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -50,7 +52,7 @@ namespace FootballManager.API.Controllers
 
         [HttpGet("{playerId}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetPlayersResponse))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [SwaggerOperation(
             Summary = "Get details about a specific player",
             Description = "Gets details about a specific player",
@@ -95,7 +97,7 @@ namespace FootballManager.API.Controllers
 
         [HttpPost("{playerId}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CreatePlayerResponse))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [SwaggerOperation(
             Summary = "Update a specific player",
             Description = "Updated a specific player data",
@@ -120,7 +122,7 @@ namespace FootballManager.API.Controllers
             } 
             else
             {
-                return BadRequest();
+                return NotFound();
             }
 
             
@@ -128,7 +130,7 @@ namespace FootballManager.API.Controllers
 
         [HttpDelete("{playerId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [SwaggerOperation(
             Summary = "Delete a specific player",
             Description = "Deletes a specific player from the database",
@@ -146,13 +148,13 @@ namespace FootballManager.API.Controllers
             }
             else
             {
-                return BadRequest();
+                return NotFound();
             }
         }
 
         [HttpGet("{playerId}/status")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [SwaggerOperation(
             Summary = "gets a specific player status",
             Description = "Gets the list of statuses that affect a player",
@@ -168,12 +170,13 @@ namespace FootballManager.API.Controllers
             }
             else
             {
-                return BadRequest();
+                return NotFound();
             }
         }
 
         [HttpPut("{playerId}/status")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [SwaggerOperation(
     Summary = "Adds a status to a player",
@@ -186,18 +189,27 @@ namespace FootballManager.API.Controllers
 
             if (player != null)
             {
-                player.ApplyStatus(Enumeration.GetById<PlayerStatus>(request.StatusId));
+                try
+                {
+                    player.ApplyStatus(Enumeration.GetById<PlayerStatus>(request.StatusId));
+                }
+                catch (Exception)
+                {
+                    return BadRequest($"Invalid Player Status {request.StatusId}");
+                }
+                
                 await _playersRepository.UpdateAsync(player);
                 return Ok(_mapper.Map<List<string>>(player.Statuses));
             }
             else
             {
-                return BadRequest();
+                return NotFound();
             }
         }
 
         [HttpDelete("{playerId}/status")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [SwaggerOperation(
             Summary = "Deletes a status from a player",
@@ -210,13 +222,26 @@ namespace FootballManager.API.Controllers
 
             if (player != null)
             {
-                player.RemoveStatus(Enumeration.GetById<PlayerStatus>(request.StatusId));
+                try
+                {
+                    player.RemoveStatus(Enumeration.GetById<PlayerStatus>(request.StatusId));
+                }
+                catch (PlayerStatusNotPresentException)
+                {
+                    return BadRequest("Player Status not found on player");
+                }
+                catch (Exception)
+                {
+                    return BadRequest($"Invalid Player Status {request.StatusId}");
+                }
+
                 await _playersRepository.UpdateAsync(player);
+
                 return Ok(_mapper.Map<List<string>>(player.Statuses));
             }
             else
             {
-                return BadRequest();
+                return NotFound();
             }
         }
     }
