@@ -28,14 +28,24 @@ namespace FootballManager.API
 
         private void ConfigureInMemoryDatabases(IServiceCollection services)
         {
+            // services.AddDbContext<FootballManagerContext>(c =>
+            //    c.UseInMemoryDatabase("Catalog"));
+
             services.AddDbContext<FootballManagerContext>(c =>
-                c.UseInMemoryDatabase("Catalog"));
+    c.UseSqlServer(Configuration.GetConnectionString("FootballManagerConnection")));
         }
 
         public void ConfigureDevelopmentServices(IServiceCollection services)
         {
             // use in-memory database
             ConfigureInMemoryDatabases(services);
+            ConfigureServices(services);
+        }
+
+        public void ConfigureProductionServices(IServiceCollection services)
+        {
+            services.AddDbContext<FootballManagerContext>(c =>
+                c.UseSqlServer(Configuration.GetConnectionString("FootballManagerConnection")));
             ConfigureServices(services);
         }
 
@@ -46,6 +56,7 @@ namespace FootballManager.API
 
             // Add EF implementation of repositories to the dependency injection
             services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
+            services.AddScoped<ITeamRepository, TeamRepository>();
 
             services.AddControllers();
 

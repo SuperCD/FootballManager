@@ -1,4 +1,7 @@
-﻿using FootballManager.Domain.Entities;
+﻿using AutoMapper;
+using FootballManager.API.Controllers.Players;
+using FootballManager.Domain.Entities;
+using FootballManager.Domain.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -17,10 +20,19 @@ namespace FootballManager.API.Controllers
     {
 
         private readonly ILogger<RoosterController> _logger;
+        private readonly IAsyncRepository<Player> _playersRepository;
+        private readonly ITeamRepository _teamsRepository;
+        private readonly IMapper _mapper;
 
-        public RoosterController(ILogger<RoosterController> logger)
+        public RoosterController(IAsyncRepository<Player> playersRepository,
+            ITeamRepository teamsRepository,
+            IMapper mapper,
+            ILogger<RoosterController> logger)
         {
             _logger = logger;
+            _playersRepository = playersRepository;
+            _teamsRepository = teamsRepository;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -32,9 +44,12 @@ namespace FootballManager.API.Controllers
         ]
         public async Task<ActionResult<ListRoosterResponse>> ListRooster([FromRoute] int teamId, CancellationToken cancellationToken)
         {
+            var team = await _teamsRepository.GetByIdWithRoosterAsync(teamId);
+
             var response = new ListRoosterResponse();
             {
                 response.TeamId = teamId;
+                response.Players.AddRange(_mapper.Map<List<PlayerDto>>(team.Rooster));
             }
             return Ok(response);
         }

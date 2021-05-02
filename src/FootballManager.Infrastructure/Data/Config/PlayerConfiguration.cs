@@ -37,6 +37,9 @@ namespace FootballManager.Infrastructure.Data.Config
             var navigation = builder.Metadata.FindNavigation(nameof(Player.Statuses));
             navigation.SetPropertyAccessMode(PropertyAccessMode.Property);
 
+            var teamnavigation = builder.Metadata.FindNavigation(nameof(Player.CurrentTeam));
+            teamnavigation.SetPropertyAccessMode(PropertyAccessMode.Property);
+
         }
     }
 }

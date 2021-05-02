@@ -26,6 +26,13 @@ namespace FootballManager.Infrastructure.Data
                         GetPreconfiguredTeams());
 
                     await catalogContext.SaveChangesAsync();
+
+                    var player = await catalogContext.Players.FirstAsync();
+                    var team = await catalogContext.Teams.FirstAsync();
+
+                    team.AddPlayer(player);
+
+                    await catalogContext.SaveChangesAsync();
                 }
             }
             catch (Exception ex)
