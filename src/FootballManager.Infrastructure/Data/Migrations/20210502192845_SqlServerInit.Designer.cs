@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FootballManager.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(FootballManagerContext))]
-    [Migration("20210502151215_InitialModel")]
-    partial class InitialModel
+    [Migration("20210502192845_SqlServerInit")]
+    partial class SqlServerInit
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -68,19 +68,18 @@ namespace FootballManager.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ParentTeamId");
+                    b.HasIndex("ParentTeamId")
+                        .IsUnique();
 
                     b.ToTable("Formation");
                 });
 
             modelBuilder.Entity("FootballManager.Domain.Entities.FormationPostition", b =>
                 {
-                    b.Property<int>("PositionNo")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<int>("FormationId")
+                        .HasColumnType("int");
 
-                    b.Property<int?>("FormationId")
+                    b.Property<int>("PositionNo")
                         .HasColumnType("int");
 
                     b.Property<int?>("PlayerId")
@@ -89,9 +88,7 @@ namespace FootballManager.Infrastructure.Data.Migrations
                     b.Property<int>("Role")
                         .HasColumnType("int");
 
-                    b.HasKey("PositionNo");
-
-                    b.HasIndex("FormationId");
+                    b.HasKey("FormationId", "PositionNo");
 
                     b.HasIndex("PlayerId");
 
@@ -170,8 +167,8 @@ namespace FootballManager.Infrastructure.Data.Migrations
             modelBuilder.Entity("FootballManager.Domain.Entities.Formation", b =>
                 {
                     b.HasOne("FootballManager.Domain.Entities.Team", "ParentTeam")
-                        .WithMany()
-                        .HasForeignKey("ParentTeamId")
+                        .WithOne("Formation")
+                        .HasForeignKey("FootballManager.Domain.Entities.Formation", "ParentTeamId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -180,13 +177,17 @@ namespace FootballManager.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("FootballManager.Domain.Entities.FormationPostition", b =>
                 {
-                    b.HasOne("FootballManager.Domain.Entities.Formation", null)
+                    b.HasOne("FootballManager.Domain.Entities.Formation", "Formation")
                         .WithMany("Postitions")
-                        .HasForeignKey("FormationId");
+                        .HasForeignKey("FormationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("FootballManager.Domain.Entities.Player", "Player")
                         .WithMany()
                         .HasForeignKey("PlayerId");
+
+                    b.Navigation("Formation");
 
                     b.Navigation("Player");
                 });
@@ -212,6 +213,8 @@ namespace FootballManager.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("FootballManager.Domain.Entities.Team", b =>
                 {
+                    b.Navigation("Formation");
+
                     b.Navigation("Rooster");
                 });
 #pragma warning restore 612, 618

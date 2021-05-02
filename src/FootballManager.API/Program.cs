@@ -1,5 +1,6 @@
 using FootballManager.Infrastructure.Data;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -25,6 +26,7 @@ namespace FootballManager.API
                 try
                 {
                     var catalogContext = services.GetRequiredService<FootballManagerContext>();
+                    catalogContext.Database.Migrate();
                     await FootballManagerContextSeed.SeedAsync(catalogContext, loggerFactory);
                 }
                 catch (Exception ex)

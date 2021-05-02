@@ -17,8 +17,6 @@ namespace FootballManager.Infrastructure.Data
             int retryForAvailability = retry.Value;
             try
             {
-                // TODO: Only run this if using a real database
-                // catalogContext.Database.Migrate();
                 if (!await catalogContext.Players.AnyAsync())
                 {
                     var teams = GetPreconfiguredTeams();

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace FootballManager.Infrastructure.Data.Migrations
 {
-    public partial class InitialModel : Migration
+    public partial class SqlServerInit : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -98,21 +98,20 @@ namespace FootballManager.Infrastructure.Data.Migrations
                 name: "FormationPostition",
                 columns: table => new
                 {
-                    PositionNo = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PositionNo = table.Column<int>(type: "int", nullable: false),
+                    FormationId = table.Column<int>(type: "int", nullable: false),
                     Role = table.Column<int>(type: "int", nullable: false),
-                    PlayerId = table.Column<int>(type: "int", nullable: true),
-                    FormationId = table.Column<int>(type: "int", nullable: true)
+                    PlayerId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_FormationPostition", x => x.PositionNo);
+                    table.PrimaryKey("PK_FormationPostition", x => new { x.FormationId, x.PositionNo });
                     table.ForeignKey(
                         name: "FK_FormationPostition_Formation_FormationId",
                         column: x => x.FormationId,
                         principalTable: "Formation",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_FormationPostition_Players_PlayerId",
                         column: x => x.PlayerId,
@@ -129,12 +128,8 @@ namespace FootballManager.Infrastructure.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Formation_ParentTeamId",
                 table: "Formation",
-                column: "ParentTeamId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_FormationPostition_FormationId",
-                table: "FormationPostition",
-                column: "FormationId");
+                column: "ParentTeamId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_FormationPostition_PlayerId",
