@@ -22,11 +22,10 @@ namespace FootballManager.Infrastructure.Data.Config
 
             builder.Property(ci => ci.FoundedIn);
 
+            builder.HasOne(ci => ci.Formation);
+
             var roosterNavigation = builder.Metadata.FindNavigation(nameof(Team.Rooster));
             roosterNavigation.SetPropertyAccessMode(PropertyAccessMode.Property);
-
-            var formationNavigation = builder.Metadata.FindNavigation(nameof(Team.Formation));
-            formationNavigation.SetPropertyAccessMode(PropertyAccessMode.Property);
 
         }
     }

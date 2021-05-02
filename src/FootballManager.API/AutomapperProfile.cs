@@ -15,6 +15,8 @@ namespace FootballManager.API
         {
             CreateMap<Player, PlayerDto>();
             CreateMap<Team, TeamDto>();
+
+            CreateMap<FormationPostition, FormationPositionDto>();
         }
     }
 }

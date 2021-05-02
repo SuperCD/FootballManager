@@ -24,6 +24,10 @@ namespace FootballManager.Infrastructure.Data.Config
             var teamNavigation = builder.Metadata.FindNavigation(nameof(Formation.ParentTeam));
             teamNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
 
+            builder.HasMany(ci => ci.Postitions)
+                .WithOne(p => p.Formation)
+                .HasForeignKey(x => x.FormationId);
+
             var posNavigation = builder.Metadata.FindNavigation(nameof(Formation.Postitions));
             posNavigation.SetPropertyAccessMode(PropertyAccessMode.Property);
 

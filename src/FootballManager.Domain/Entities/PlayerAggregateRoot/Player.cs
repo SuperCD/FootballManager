@@ -15,6 +15,9 @@ namespace FootballManager.Domain.Entities
         // Properties
         public string Name { get; set; }
         public string Surname { get; set; }
+
+        public string FullName => $"{Name} {Surname}";
+
         public DateTime BirthDate { get; set; }
         public FootType PreferredFoot { get; set; }
         public PlayerRole Role { get; set; }

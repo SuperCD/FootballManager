@@ -19,11 +19,11 @@ namespace FootballManager.Domain.Entities
         /// <summary>
         ///  The current formation on the field for the team
         /// </summary>
-        public Formation Formation;
+        public Formation Formation { get; private set; }
 
         public Team()
         {
-            Formation = Formation.Build("4-4-2"); // Always default to 4-4-2 in this demo
+            Formation = Formation.Build("4-4-2");
             Formation.ParentTeam = this;
         }
 

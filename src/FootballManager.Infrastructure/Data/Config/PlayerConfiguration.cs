@@ -24,6 +24,8 @@ namespace FootballManager.Infrastructure.Data.Config
                 .IsRequired(true)
                 .HasMaxLength(50);
 
+            builder.Ignore(c => c.FullName);
+
             builder.Property(ci => ci.BirthDate);
 
             builder.Property(ci => ci.PreferredFoot);

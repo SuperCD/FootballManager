@@ -9,5 +9,6 @@ namespace FootballManager.Domain.Interfaces
     public interface ITeamRepository : IAsyncRepository<Team>
     {
         Task<Team> GetByIdWithRoosterAsync(int id);
+        Task<Team> GetByIdWithFormationAsync(int id);
     }
 }

@@ -21,5 +21,14 @@ namespace FootballManager.Infrastructure.Data
                 .Include(o => o.Rooster)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
+
+        public Task<Team> GetByIdWithFormationAsync(int id)
+        {
+            return _dbContext.Teams
+                .Include(o => o.Rooster)
+                .Include(o => o.Formation)
+                .Include($"{nameof(Team.Formation)}.{nameof(Formation.Postitions)}")
+                .FirstOrDefaultAsync(x => x.Id == id);
+        }
     }
 }

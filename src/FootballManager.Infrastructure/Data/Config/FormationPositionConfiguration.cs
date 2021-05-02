@@ -12,7 +12,7 @@ namespace FootballManager.Infrastructure.Data.Config
     {
         public void Configure(EntityTypeBuilder<FormationPostition> builder)
         {
-            builder.HasKey(p => p.PositionNo);
+            builder.HasKey(p => new { p.FormationId, p.PositionNo });
 
 
             builder.Property(p => p.Role)
