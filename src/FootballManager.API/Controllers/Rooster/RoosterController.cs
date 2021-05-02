@@ -54,19 +54,26 @@ namespace FootballManager.API.Controllers
             return Ok(response);
         }
 
-        [HttpPut("{playerId}")]
+        [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AddPlayerToRoosterResponse))]
         [SwaggerOperation(
             Summary = "Add Player to the rooster",
             Description = "Adds an existing player from the database to the team rooster",
             OperationId = "Rooster.Add")
         ]
-        public async Task<ActionResult<AddPlayerToRoosterResponse>> AddPlayerToRooster([FromRoute] int teamId, [FromRoute] int playerId, CancellationToken cancellationToken)
+        public async Task<ActionResult<AddPlayerToRoosterResponse>> AddPlayerToRooster([FromRoute] int teamId, [FromBody] PlayerOperationRequest request, CancellationToken cancellationToken)
         {
+            var team = await _teamsRepository.GetByIdWithRoosterAsync(teamId);
+            var player = await _playersRepository.GetByIdAsync(request.PlayerId);
+
+            team.AddPlayer(player);
+
+            await _teamsRepository.UpdateAsync(team);
+
             var response = new AddPlayerToRoosterResponse();
             {
                 response.TeamId = teamId;
-                response.PlayerId = playerId;
+                response.PlayerId = request.PlayerId;
             }
             return Ok(response);
         }

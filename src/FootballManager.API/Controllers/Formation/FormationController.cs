@@ -52,50 +52,52 @@ namespace FootballManager.API.Controllers
             return Ok(response);
         }
 
-        [HttpPut("{playerId}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AddPlayerToRoosterResponse))]
+        [HttpPut]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AddPlayerToFormationResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [SwaggerOperation(
             Summary = "Add Player to formation",
             Description = "Adds a team player to the formation in the first compatible position (if available)",
             OperationId = "Formation.Add")
         ]
-        public async Task<ActionResult<AddPlayerToRoosterResponse>> AddPlayerToFormation([FromRoute] int teamId, [FromRoute] int playerId, CancellationToken cancellationToken)
+        public async Task<ActionResult<AddPlayerToFormationResponse>> AddPlayerToFormation([FromRoute] int teamId, [FromBody] PlayerOperationRequest request, CancellationToken cancellationToken)
         {
             var team = await _teamsRepository.GetByIdWithFormationAsync(teamId);
-            var player = await _playersRepository.GetByIdAsync(playerId);
+            var player = await _playersRepository.GetByIdAsync(request.PlayerId);
             team.Formation.AddPlayer(player);
 
             await _teamsRepository.UpdateAsync(team);
 
-            var response = new AddPlayerToRoosterResponse();
+            var response = new AddPlayerToFormationResponse();
             {
                 response.TeamId = teamId;
-                response.PlayerId = playerId;
+                response.PlayerId = request.PlayerId;
+                response.PositionNo = team.Formation.Postitions.Single(x => x.Player.Id == request.PlayerId).PositionNo;
             }
             return Ok(response);
         }
 
-        [HttpPut("{positionNo}/{playerId}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AddPlayerToRoosterResponse))]
+        [HttpPut("{positionNo}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AddPlayerToFormationResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [SwaggerOperation(
             Summary = "Add Player to a position",
             Description = "Adds a team player to the formation in the specific position",
             OperationId = "Formation.Add")
         ]
-        public async Task<ActionResult<AddPlayerToRoosterResponse>> AddPlayerToPosition([FromRoute] int teamId, [FromRoute] int positionNo, [FromRoute] int playerId, CancellationToken cancellationToken)
+        public async Task<ActionResult<AddPlayerToFormationResponse>> AddPlayerToPosition([FromRoute] int teamId, [FromRoute] int positionNo, [FromBody] PlayerOperationRequest request, CancellationToken cancellationToken)
         {
             var team = await _teamsRepository.GetByIdWithFormationAsync(teamId);
-            var player = await _playersRepository.GetByIdAsync(playerId);
+            var player = await _playersRepository.GetByIdAsync(request.PlayerId);
             team.Formation.AddPlayer(player, positionNo);
 
             await _teamsRepository.UpdateAsync(team);
 
-            var response = new AddPlayerToRoosterResponse();
+            var response = new AddPlayerToFormationResponse();
             {
                 response.TeamId = teamId;
-                response.PlayerId = playerId;
+                response.PlayerId = request.PlayerId;
+                response.PositionNo = positionNo;
             }
             return Ok(response);
         }
