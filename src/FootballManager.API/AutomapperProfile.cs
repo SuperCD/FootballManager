@@ -14,6 +14,9 @@ namespace FootballManager.API
         public AutomapperProfile()
         {
             CreateMap<Player, PlayerDto>();
+            CreateMap<Player, PlayerDetailsDto>();
+            CreateMap<ActivePlayerStatus, string>().ConvertUsing(s => s.Status.Name);
+
             CreateMap<Team, TeamDto>();
 
             CreateMap<FormationPostition, FormationPositionDto>();

@@ -2,6 +2,6 @@
 {
     public class GetPlayersResponse
     {
-        public PlayerDto Player { get; internal set; }
+        public PlayerDetailsDto Player { get; internal set; }
     }
 }

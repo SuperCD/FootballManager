@@ -22,9 +22,9 @@ namespace FootballManager.API.Controllers
 
         private readonly ILogger<PlayersController> _logger;
         private readonly IMapper _mapper;
-        private readonly IAsyncRepository<Player> _playersRepository;
+        private readonly IPlayerRepository _playersRepository;
 
-        public PlayersController(IAsyncRepository<Player> playersRepository,
+        public PlayersController(IPlayerRepository playersRepository,
             IMapper mapper,
             ILogger<PlayersController> logger)
         {
@@ -60,7 +60,7 @@ namespace FootballManager.API.Controllers
         {
             var response = new GetPlayersResponse
             {
-                Player = _mapper.Map<PlayerDto>(await _playersRepository.GetByIdAsync(playerId, cancellationToken))
+                Player = _mapper.Map<PlayerDetailsDto>(await _playersRepository.GetByIdWithStatusAsync(playerId))
             };
             if (response.Player != null)
             {
@@ -149,5 +149,77 @@ namespace FootballManager.API.Controllers
                 return BadRequest();
             }
         }
+
+        [HttpGet("{playerId}/status")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [SwaggerOperation(
+            Summary = "gets a specific player status",
+            Description = "Gets the list of statuses that affect a player",
+            OperationId = "players.status.get")
+        ]
+        public async Task<ActionResult<List<string>>> GetPlayerStatus([FromRoute] int playerId, CancellationToken cancellationToken)
+        {
+            var player = await _playersRepository.GetByIdWithStatusAsync(playerId);
+
+            if (player != null)
+            {
+                return Ok(_mapper.Map<List<string>>(player.Statuses));
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPut("{playerId}/status")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [SwaggerOperation(
+    Summary = "Adds a status to a player",
+    Description = "Adds a specific status to the ones that affect the player",
+    OperationId = "players.status.put")
+]
+        public async Task<ActionResult<List<string>>> AddPlayerStatus([FromRoute] int playerId, [FromBody] PlayerStatusRequest request, CancellationToken cancellationToken)
+        {
+            var player = await _playersRepository.GetByIdWithStatusAsync(playerId);
+
+            if (player != null)
+            {
+                player.ApplyStatus(Enumeration.GetById<PlayerStatus>(request.StatusId));
+                await _playersRepository.UpdateAsync(player);
+                return Ok(_mapper.Map<List<string>>(player.Statuses));
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpDelete("{playerId}/status")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [SwaggerOperation(
+            Summary = "Deletes a status from a player",
+            Description = "Deletes a specific status from the ones that affect the player",
+            OperationId = "players.status.delete")
+]
+        public async Task<ActionResult<List<string>>> DeletePlayerStatus([FromRoute] int playerId, [FromBody] PlayerStatusRequest request, CancellationToken cancellationToken)
+        {
+            var player = await _playersRepository.GetByIdWithStatusAsync(playerId);
+
+            if (player != null)
+            {
+                player.RemoveStatus(Enumeration.GetById<PlayerStatus>(request.StatusId));
+                await _playersRepository.UpdateAsync(player);
+                return Ok(_mapper.Map<List<string>>(player.Statuses));
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
     }
+
+
 }

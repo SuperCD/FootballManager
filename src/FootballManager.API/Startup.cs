@@ -57,6 +57,7 @@ namespace FootballManager.API
             // Add EF implementation of repositories to the dependency injection
             services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
             services.AddScoped<ITeamRepository, TeamRepository>();
+            services.AddScoped<IPlayerRepository, PlayerRepository>();
 
             services.AddControllers();
 
