@@ -20,6 +20,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FootballManager.API", "src\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FootballManager.Infrastructure", "src\FootballManager.Infrastructure\FootballManager.Infrastructure.csproj", "{634C36F7-AD65-489F-996E-0EDAC4595726}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FootballManager.API.FunctionalTest", "FootballManager.API.FunctionalTest\FootballManager.API.FunctionalTest.csproj", "{1FD09E95-8623-4129-813C-75A8079706EE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,6 +44,10 @@ Global
 		{634C36F7-AD65-489F-996E-0EDAC4595726}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{634C36F7-AD65-489F-996E-0EDAC4595726}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{634C36F7-AD65-489F-996E-0EDAC4595726}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1FD09E95-8623-4129-813C-75A8079706EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FD09E95-8623-4129-813C-75A8079706EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FD09E95-8623-4129-813C-75A8079706EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FD09E95-8623-4129-813C-75A8079706EE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -51,6 +57,7 @@ Global
 		{6E1B2C41-814E-4CE7-B315-8BABE7F59763} = {27A82B2D-E13B-4A28-86D4-A9333C935665}
 		{23A95527-1673-42C6-964C-42D8D42A60F0} = {343247F8-E155-49DA-A666-3F0D8826BF81}
 		{634C36F7-AD65-489F-996E-0EDAC4595726} = {343247F8-E155-49DA-A666-3F0D8826BF81}
+		{1FD09E95-8623-4129-813C-75A8079706EE} = {27A82B2D-E13B-4A28-86D4-A9333C935665}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6A516A58-79BF-47FE-9D81-61BE768BAF01}
