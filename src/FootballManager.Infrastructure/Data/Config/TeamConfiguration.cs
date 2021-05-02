@@ -25,6 +25,9 @@ namespace FootballManager.Infrastructure.Data.Config
             var roosterNavigation = builder.Metadata.FindNavigation(nameof(Team.Rooster));
             roosterNavigation.SetPropertyAccessMode(PropertyAccessMode.Property);
 
+            var formationNavigation = builder.Metadata.FindNavigation(nameof(Team.Formation));
+            formationNavigation.SetPropertyAccessMode(PropertyAccessMode.Property);
+
         }
     }
 }
