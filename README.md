@@ -1,5 +1,6 @@
 # FootballManager
-Welcome to all Happycoders to my small web API to manage football teams!
+Welcome to my small web API to manage football teams! This is a demo project to test some idea on Domain Driven Development of rest API in ASP.net Core with a clean code and a good structure of the project.
+
 This readme is designed to give you a basic idea of the project organizanion.
 
 This application, as requested, uses .NET core 3.1 and uses Microsoft technologies for the backend part so the API is written in ASP.net Core and the Data Access Layer is uses EF Core.
@@ -31,10 +32,6 @@ There are two main test ideas followed:
 
 For this test, as I had not much time unfortunately, the functional tests are only demonstrated briefily and are not extended to every possible case.
 
-# Deployment
-The API was deployed on Azure at https://football-heply.azurewebsites.net
-The swagger is at https://football-heply.azurewebsites.net/swagger
-
 # Final notes and remarks
 I had fun making this demo. I've tried to work towards a clean architecture that was not the obvious auto-scaffolded API from ASP.net core.
 My goal was to expore and show Domain Driven Design to make such API in a clean, modular and manageble way.
@@ -42,5 +39,3 @@ Unfortunately I was very busy with my job because I'm leaving for China this wee
 Also some things here could be cleaner than they are now:
 * Improve incapsulation of Child Entities in the domain model to avoid developers to circumvent business logic
 * The API could use some more love for improved usability
-
-If you think this demo is looking ok but you still think it needs some work, or you really want to see some frontend code I can work on that, but starting from half May.
